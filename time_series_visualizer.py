@@ -30,7 +30,7 @@ def draw_line_plot():
 
 def draw_bar_plot():
     # Copy and modify data for monthly bar plot
-    df_bar = df.groupby([df.index.year, df.index.month_name()]).mean().value.unstack()df_bar = df.groupby([df.index.year, df.index.month_name()]).mean().value.unstack()
+    df_bar = df.groupby([df.index.year, df.index.month_name()]).mean().value.unstack()
     
     # Draw bar plot
     df_bar.columns.name = "Months"
