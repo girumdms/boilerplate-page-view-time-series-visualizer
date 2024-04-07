@@ -19,10 +19,6 @@ def draw_line_plot():
     plt.title('Daily freeCodeCamp Forum Page Views 5/2016-12/2019')
     plt.xlabel('Date')
     plt.ylabel('Page Views')
-    plt.show()
-
-
-
 
 
     # Save image and return fig (don't change this part)
@@ -31,15 +27,17 @@ def draw_line_plot():
 
 def draw_bar_plot():
     # Copy and modify data for monthly bar plot
-    df['month'] = [d.strftime('%b') for d in df.date]
-    df['year'] = [d.year for d in df.date]
-    df_bar = df.groupby([df['year'], df['month']]).mean().value.unstack()    
+    df = pd.read_csv('fcc-forum-pageviews.csv', parse_dates=["date"], index_col='date')
+    df = df.value[(df.value > df.value.quantile(0.025)) & (df.value < df.value.quantile(0.975))]
+    df = df.reset_index(['date'])
+    df = df.set_index('date')
+    df_bar = df.groupby([df.index.year, df.index.month_name()]).mean().value.unstack()
+    df_barr = df_bar[list(calendar.month_name)[1:]]
     
     
     # Draw bar plot
-    fig = plt.figure(figsize = (15,5))
-    df_bar.plot(kind= 'bar', xlabel='Years', ylabel = 'Average page views')
-
+    fig = plt.figure(figsize=(30,8))
+    ax = df_barr.plot.bar(xlabel='Years', ylabel = 'Average page views')
 
 
     # Save image and return fig (don't change this part)
@@ -54,9 +52,9 @@ def draw_box_plot():
     df_box['month'] = [d.strftime('%b') for d in df_box.date]
 
     # Draw box plots (using Seaborn)
-    fig, ax = plt.subplot(1,2,figsize = (20,4))
-    sns.boxplot(data = df_box, x=df_box['year'], y= df_box['value'], ax = ax[1,1]).set(xlabel = 'Year', ylabel = 'Page Views', title = 'Year-wise Box Plot (Trend)')
-    sns.boxplot(data= df_box, x = df_box['month'], y= df_box['value'], ax = ax[1,2]).set(xlabel = 'Month', ylabel = 'Page Views',title = 'Month-Wise Box Plot (Seasonality)')
+    fig, axs = plt.subplot(1, 2, figsize = (20,4))
+    sns.boxplot(data = df_box, x=df_box['year'], y= df_box['value'], axs = [1,1]).set(xlabel = 'Year', ylabel = 'Page Views', title = 'Year-wise Box Plot (Trend)')
+    sns.boxplot(data= df_box, x = df_box['month'], y= df_box['value'], axs = [1,2]).set(xlabel = 'Month', ylabel = 'Page Views',title = 'Month-Wise Box Plot (Seasonality)')
 
 
 
